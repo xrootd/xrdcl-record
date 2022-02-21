@@ -54,7 +54,11 @@ Source0:   xrdcl-record.tar.gz
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-BuildRequires: cmake
+%if %{?rhel}%{!?rhel:0} == 7
+BuildRequires:	cmake3 >= 3.1
+%else
+BuildRequires:	cmake >= 3.1
+%endif
 BuildRequires: xrootd-client-devel
 
 %description
@@ -72,9 +76,8 @@ cd xrdcl-record
 
 mkdir build
 pushd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
-
-make -i VERBOSE=1 %{?_smp_mflags}
+%cmake3 -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
+%cmake3_build
 popd
 
 #-------------------------------------------------------------------------------
@@ -83,10 +86,11 @@ popd
 %install
 rm -rf $RPM_BUILD_ROOT
 
-pushd xrdcl-record
-pushd  build
-make install DESTDIR=$RPM_BUILD_ROOT
-popd
+%cmake3_install
+#pushd xrdcl-record
+#pushd  build
+#make install DESTDIR=$RPM_BUILD_ROOT
+#popd
 
 # client plug-in config
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/xrootd/client.plugins.d

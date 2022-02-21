@@ -22,3 +22,7 @@ set_target_properties(
 #-------------------------------------------------------------------------------
 # Install
 #-------------------------------------------------------------------------------
+install(
+  TARGETS ${LIB_XRDCL_RECORDER_PLUGIN}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )

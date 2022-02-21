@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 2.8)
 
 project(XrdClHttp)
 
+include( GNUInstallDirs )
+
 list(APPEND CMAKE_MODULE_PATH
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/cmake)

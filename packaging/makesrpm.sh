@@ -183,7 +183,7 @@ echo "[i] RPM compliant version: $VERSION-$RELEASE"
 # exit on any error
 set -e
 
-TEMPDIR=`mktemp -d /tmp/xrdcl-http.srpm.XXXXXXXXXX`
+TEMPDIR=`mktemp -d /tmp/xrdcl-record.srpm.XXXXXXXXXX`
 RPMSOURCES=$TEMPDIR/rpmbuild/SOURCES
 mkdir -p $RPMSOURCES
 mkdir -p $TEMPDIR/rpmbuild/SRPMS
@@ -205,12 +205,12 @@ fi
 #-------------------------------------------------------------------------------
 # Generate the spec file
 #-------------------------------------------------------------------------------
-if test ! -r rhel/xrdcl-http.spec.in; then
+if test ! -r rhel/xrdcl-record.spec.in; then
   echo "[!] The specfile template does not exist!" 1>&2
   exit 7
 fi
-cat rhel/xrdcl-http.spec.in | sed "s/__VERSION__/$VERSION/" | \
-  sed "s/__RELEASE__/$RELEASE/" > $TEMPDIR/xrdcl-http.spec
+cat rhel/xrdcl-record.spec.in | sed "s/__VERSION__/$VERSION/" | \
+  sed "s/__RELEASE__/$RELEASE/" > $TEMPDIR/xrdcl-record.spec
 
 #-------------------------------------------------------------------------------
 # Make a tarball of the latest commit on the branch
@@ -227,8 +227,8 @@ if test $? -ne 0; then
   exit 5
 fi
 
-git archive --prefix=xrdcl-http/ --format=tar $COMMIT | gzip -9fn > \
-      $RPMSOURCES/xrdcl-http.tar.gz
+git archive --prefix=xrdcl-record/ --format=tar $COMMIT | gzip -9fn > \
+      $RPMSOURCES/xrdcl-record.tar.gz
 
 if test $? -ne 0; then
   echo "[!] Unable to create the source tarball" 1>&2
@@ -238,16 +238,16 @@ fi
 #-------------------------------------------------------------------------------
 # Check if we need some other versions
 #-------------------------------------------------------------------------------
-OTHER_VERSIONS=`cat $TEMPDIR/xrdcl-http.spec | \
-    egrep '^Source[0-9]+:[[:space:]]*xrdcl-http-.*.gz$' |\
+OTHER_VERSIONS=`cat $TEMPDIR/xrdcl-record.spec | \
+    egrep '^Source[0-9]+:[[:space:]]*xrdcl-record-.*.gz$' |\
     awk  '{ print $2; }'`
 
 for VER in $OTHER_VERSIONS; do
-    VER=${VER/xrdcl-http-/}
+    VER=${VER/xrdcl-record-/}
     VER=${VER/.tar.gz/}
 
-    git archive --prefix=xrdcl-http-$VER/ --format=tar v$VER | gzip -9fn > \
-        $RPMSOURCES/xrdcl-http-$VER.tar.gz
+    git archive --prefix=xrdcl-record-$VER/ --format=tar v$VER | gzip -9fn > \
+        $RPMSOURCES/xrdcl-record-$VER.tar.gz
 
     if test $? -ne 0; then
         echo "[!] Unable to create the source tarball" 1>&2
@@ -270,13 +270,13 @@ eval "rpmbuild --define \"_topdir $TEMPDIR/rpmbuild\"    \
                --define \"_binary_filedigest_algorithm md5\" \
                ${USER_DEFINE} \
                ${USER_D} \
-               -bs $TEMPDIR/xrdcl-http.spec > $TEMPDIR/log"
+               -bs $TEMPDIR/xrdcl-record.spec > $TEMPDIR/log"
 if test $? -ne 0; then
   echo "[!] RPM creation failed" 1>&2
   exit 8
 fi
 
-cp $TEMPDIR/rpmbuild/SRPMS/xrdcl-http*.src.rpm $OUTPUTPATH
+cp $TEMPDIR/rpmbuild/SRPMS/xrdcl-record*.src.rpm $OUTPUTPATH
 rm -rf $TEMPDIR
 
 echo "[i] Done."
