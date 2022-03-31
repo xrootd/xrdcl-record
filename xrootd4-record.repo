@@ -1,0 +1,11 @@
+[xrootd4]
+name=XRootD4
+baseurl=https://storage-ci.web.cern.ch/storage-ci/xrootd/release/cc-7-x86_64/v4.12.8/
+enabled=1
+gpgcheck=0
+
+[xrootd4-record]
+name=XRootD4 Record
+baseurl=https://xrootd.web.cern.ch/xrootd/xrdcl-record/cc-7-x86_64/
+enabled=1
+gpgcheck=0
