@@ -59,7 +59,7 @@ BuildRequires:	cmake3 >= 3.1
 %else
 BuildRequires:	cmake >= 3.1
 %endif
-BuildRequires: xrootd-client-devel
+BuildRequires: xrootd-client-devel%{?_isa} = %{epoch}:4.12.8
 
 %description
 xrdcl-http is an XRootD client plugin which allows XRootD to interact 
