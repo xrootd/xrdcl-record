@@ -204,7 +204,13 @@ struct StatAction : public Action
     std::stringstream ss;
     ss << std::to_string(info->GetSize()) << ';';
     ss << std::to_string(info->GetFlags()) << ';';
-    ss << info->GetModTime();
+    ss << info->GetModTime() << ';';
+    ss << info->GetChangeTime() << ';';
+    ss << info->GetAccessTime() << ';';
+    ss << info->GetModeAsOctString() << ';';
+    ss << info->GetOwner() << ';';
+    ss << info->GetGroup() << ';';
+    ss << info->GetChecksum();
     serialrsp = ss.str();
   }
 
@@ -240,6 +246,32 @@ struct ReadAction : public Action
   uint32_t size;
 };
 
+struct PgReadAction : public Action
+{
+  PgReadAction(void* file, uint64_t offset, uint32_t size, uint16_t timeout)
+  : Action(file, timeout)
+  , offset(offset)
+  , size(size)
+  {
+  }
+
+  std::string Name() { return "PgRead"; }
+
+  std::string ArgStr() { return std::to_string(offset) + ';' + std::to_string(size); }
+
+  void Serialize(AnyObject* response)
+  {
+    if (!response)
+      return;
+    PageInfo* ptr = nullptr;
+    response->Get(ptr);
+    serialrsp = std::to_string(ptr->GetLength()) + ';' + std::to_string(ptr->GetNbRepair());
+  }
+
+  uint64_t offset;
+  uint32_t size;
+};
+
 //----------------------------------------------------------------------------
 //! Write action
 //----------------------------------------------------------------------------
@@ -255,6 +287,28 @@ struct WriteAction : public Action
   std::string Name() { return "Write"; }
 
   std::string ArgStr() { return std::to_string(offset) + ';' + std::to_string(size); }
+
+  uint64_t offset;
+  uint32_t size;
+};
+
+struct PgWriteAction : public Action
+{
+  PgWriteAction(void* file, uint64_t offset, uint32_t size, uint16_t timeout)
+  : Action(file, timeout)
+  , offset(offset)
+  , size(size)
+  {
+  }
+
+  std::string Name() { return "PgWrite"; }
+
+  std::string ArgStr()
+  {
+    std::stringstream ss;
+    ss << std::to_string(offset) << ';' << std::to_string(size);
+    return ss.str();
+  }
 
   uint64_t offset;
   uint32_t size;

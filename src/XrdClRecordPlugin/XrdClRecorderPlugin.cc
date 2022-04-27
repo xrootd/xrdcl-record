@@ -24,7 +24,6 @@
 
 #include "XrdClRecorder.hh"
 #include "XrdClRecorderPlugin.hh"
-#include "XrdVersion.hh"
 
 XrdVERSIONINFO(XrdClGetPlugIn, XrdClGetPlugIn)
 

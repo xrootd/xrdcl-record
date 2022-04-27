@@ -31,7 +31,6 @@
 #include "XrdClAction.hh"
 
 #include <mutex>
-#include <memory>
 #include <fcntl.h>
 
 namespace XrdCl
@@ -321,6 +320,35 @@ public:
     std::unique_ptr<Action> ptr( new WriteAction( this, offset, size, timeout ) );
     RecordHandler *recHandler = new RecordHandler( output, std::move( ptr ), handler );
     return file.Write( offset, size, buffer, recHandler, timeout );
+  }
+
+  //------------------------------------------------------------------------
+  //! @see XrdCl:File PgRead
+  //------------------------------------------------------------------------
+  virtual XRootDStatus PgRead( uint64_t         offset,
+                               uint32_t         size,
+                               void            *buffer,
+                               ResponseHandler *handler,
+                               uint16_t         timeout )
+  {
+    std::unique_ptr<Action> ptr( new PgReadAction( this, offset, size, timeout ) );
+    RecordHandler *recHandler = new RecordHandler( output, std::move( ptr ), handler );
+    return file.PgRead( offset, size, buffer, recHandler, timeout );
+  }
+
+  //------------------------------------------------------------------------
+  //! @see XrdCl::File::PgWrite
+  //------------------------------------------------------------------------
+  virtual XRootDStatus PgWrite( uint64_t               offset,
+                                uint32_t               size,
+                                const void            *buffer,
+                                std::vector<uint32_t> &cksums,
+                                ResponseHandler       *handler,
+                                uint16_t               timeout )
+  {
+    std::unique_ptr<Action> ptr( new PgWriteAction( this, offset, size, timeout ) );
+    RecordHandler *recHandler = new RecordHandler( output, std::move( ptr ), handler );
+    return file.PgWrite( offset, size, buffer, cksums, recHandler, timeout );
   }
 
   //----------------------------------------------------------------------------

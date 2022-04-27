@@ -59,7 +59,12 @@ BuildRequires:	cmake3 >= 3.1
 %else
 BuildRequires:	cmake >= 3.1
 %endif
-BuildRequires: xrootd-client-devel
+
+BuildRequires: xrootd-client-devel%{?_isa} = %{epoch}:5.4.2
+
+%if %{?rhel}%{!?rhel:0} == 7
+BuildRequires: devtoolset-7
+%endif
 
 %description
 xrdcl-http is an XRootD client plugin which allows XRootD to interact 
@@ -72,6 +77,11 @@ with HTTP repositories.
 %setup -c -n xrdcl-record
 
 %build
+
+%if %{?rhel}%{!?rhel:0} == 7
+. /opt/rh/devtoolset-7/enable
+%endif
+
 cd xrdcl-record
 
 mkdir build
@@ -109,7 +119,7 @@ rm -rf $RPM_BUILD_ROOT
 #-------------------------------------------------------------------------------
 %files
 %defattr(-,root,root,-)
-%{_libdir}/libXrdClRecorder-4.so
+%{_libdir}/libXrdClRecorder-5.so
 %{_sysconfdir}/xrootd/client.plugins.d/recorder.conf
 
 #-------------------------------------------------------------------------------
